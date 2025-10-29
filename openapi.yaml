@@ -1,0 +1,197 @@
+openapi: 3.1.1
+info:
+  title: API First
+  version: 1.0.0
+  description: An example OpenAPI specification for an API-first project.
+servers:
+  - url: http://localhost:3000
+components:
+  schemas:
+
+    CategoryEnum:
+      type: string
+      enum:
+        - electronics
+        - clothing
+        - books
+        - home
+        - beauty
+        - sports
+      description: Category of the product
+
+    UserBase:
+      type: object
+      properties:
+        name:
+          type: string
+          minLength: 2
+        age:
+          type: integer
+          minimum: 18
+        email:
+          type: string
+          format: email
+    User:
+      allOf:
+        - $ref: '#/components/schemas/UserBase'
+        - type: object
+          properties:
+            id:
+              type: string
+              description: Unique identifier for the user
+    UserCreate:
+      allOf:
+        - $ref: '#/components/schemas/UserBase'
+        - type: object
+          required:
+            - name
+            - age
+            - email
+    UserUpdate:
+      allOf:
+        - $ref: '#/components/schemas/UserBase'  # All fields optional
+        - type: object
+    
+    ProductRating:
+      type: object
+      required:
+        - score
+        - review
+      properties:
+        score:
+          type: integer
+          minimum: 1
+          maximum: 5
+        review:
+          type: string
+          minLength: 10
+          maxLength: 300
+    
+    Product:
+      type: object
+
+      properties:
+        name:
+          type: string
+          minLength: 2
+          maxLength: 100
+        description:
+          type: string
+          maxLength: 500
+        price:
+          type: number
+          minimum: 0
+          multipleOf: 0.01
+        category:
+          $ref: '#/components/schemas/CategoryEnum'
+        tags:
+          type: array
+          items:
+            type: string
+          minItems: 1
+        inStock:
+          type: boolean
+        specifications:
+          type: object
+          additionalProperties:
+            type: string
+        ratings:
+          type: array
+          items:
+            $ref: '#/components/schemas/ProductRating'
+          minItems: 1
+      
+
+
+      required:
+        - name
+        - price
+        - category
+        
+
+    ErrorResponse:
+      type: object
+      properties:
+        error:
+          type: string
+          example: User not found
+paths:
+  /hello:
+    get:
+      summary: Hello World Endpoint
+      responses:
+        '200':
+          description: A successful response
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: Hello, World!
+  /users:
+    post:
+      summary: Create a new user
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UserCreate'
+      responses:
+        '201':
+          description: User created successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/User'
+  /users/{userId}:
+    get:
+      summary: Get user by ID
+      parameters:
+        - name: userId
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: User details
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/User'
+        '404':
+          description: User not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+    put:
+      summary: Update user by ID
+      parameters:
+        - name: userId
+          in: path
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UserUpdate'
+      responses:
+        '200':
+          description: User updated successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/User'
+        '404':
+          description: User not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
