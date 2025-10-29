@@ -172,6 +172,13 @@ paths:
           application/json:
             schema:
               $ref: '#/components/schemas/UserCreate'
+            example:
+                summary: Example user creation payload
+                value:
+                  name: "John Doe"
+                  age: 30
+                  email: "johndoe@gmail.com"
+
       responses:
         '201':
           description: User created successfully
@@ -287,6 +294,23 @@ paths:
           application/json:
             schema:
               $ref: '#/components/schemas/ProductCreate'
+            example:
+                summary: Example product creation payload
+                value:
+                  name: "Wireless Mouse"
+                  description: "A high-precision wireless mouse"
+                  price: 29.99
+                  category: "electronics"
+                  tags: ["computer", "accessory", "wireless"]
+                  inStock: true
+                  specifications:
+                    color: "black"
+                    batteryLife: "12 months"
+                  ratings:
+                    - score: 5
+                      review: "Excellent mouse with great battery life!"
+                    - score: 4
+                      review: "Good value for the price."
       responses:
         '201':
           description: Product created successfully
