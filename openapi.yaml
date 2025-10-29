@@ -20,6 +20,12 @@ tags:
 components:
   schemas:
 
+    IDInteger:
+      type: integer
+      format: int32
+      minimum: 1
+      description: A positive integer ID
+
     CategoryEnum:
       type: string
       enum:
@@ -49,7 +55,7 @@ components:
         - type: object
           properties:
             id:
-              type: string
+              type: integer
               description: Unique identifier for the user
     UserCreate:
       allOf:
@@ -117,7 +123,7 @@ components:
         - type: object
           properties:
             id:
-              type: string
+              type: integer
               description: Unique identifier for the product
     ProductCreate:
       allOf:
@@ -173,6 +179,7 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/User'
+
   /users/{userId}:
     get:
       tags:
@@ -183,7 +190,7 @@ paths:
           in: path
           required: true
           schema:
-            type: string
+            $ref: '#/components/schemas/IDInteger'
       responses:
         '200':
           description: User details
@@ -206,7 +213,7 @@ paths:
           in: path
           required: true
           schema:
-            type: string
+            $ref: '#/components/schemas/IDInteger'
       requestBody:
         required: true
         content:
@@ -226,6 +233,32 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/ErrorResponse'
+  
+  /users/all:
+    get:
+      tags:
+        - Users
+      summary: Get all users
+      responses:
+        '200':
+          description: List of all users
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/User'
+        '404':
+          description: No users found
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    example: No users found
+  
   /products:
     post:
       tags:
@@ -254,7 +287,7 @@ paths:
           in: path
           required: true
           schema:
-            type: string
+            $ref: '#/components/schemas/IDInteger'
       responses:
         '200':
           description: Product details
@@ -277,7 +310,7 @@ paths:
           in: path
           required: true
           schema:
-            type: string
+            $ref: '#/components/schemas/IDInteger'
       requestBody:
         required: true
         content:

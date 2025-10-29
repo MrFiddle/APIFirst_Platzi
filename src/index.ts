@@ -13,7 +13,7 @@ const port = 3000;
 // In-memory storage for users
 const users: any[] = [
   {
-    id: "1",
+    id: 1,
     name: "John Doe",
     age: 30,
     email: "john.doe@example.com",
@@ -24,7 +24,7 @@ let nextUserId = 2;
 // In-memory storage for products
 const products: any[] = [
   {
-    id: "1",
+    id: 1,
     name: "Sample Product",
     price: 20.0,
     category: "electronics",
@@ -66,7 +66,7 @@ app.get("/hello", (req, res) => {
 app.post("/users", (req: Request, res: Response) => {
   const { name, age, email } = req.body;
   const newUser = {
-    id: (nextUserId++).toString(),
+    id: nextUserId++,
     name,
     age,
     email,
@@ -76,8 +76,18 @@ app.post("/users", (req: Request, res: Response) => {
   res.status(201).json(newUser);
 });
 
+app.get("/users/all", (req: Request, res: Response) => {
+  console.log("Fetching all users");
+  if (users.length === 0) {
+    console.log("No users found");
+    return res.status(404).json({ error: "No users found" });
+  }
+  res.status(200).json(users);
+});
+
 app.get("/users/:userId", (req: Request, res: Response) => {
-  const userId = req.params.userId;
+  console.log("Fetching user with ID:", req.params.userId);
+  const userId = parseInt(req.params.userId);
   const user = users.find((u) => u.id === userId);
   if (!user) {
     return res.status(404).json({ error: "User not found" });
@@ -86,7 +96,7 @@ app.get("/users/:userId", (req: Request, res: Response) => {
 });
 
 app.put("/users/:userId", (req: Request, res: Response) => {
-  const userId = req.params.userId;
+  const userId = parseInt(req.params.userId);
   const userIndex = users.findIndex((u) => u.id === userId);
   if (userIndex === -1) {
     return res.status(404).json({ error: "User not found" });
@@ -109,7 +119,7 @@ app.post("/products", (req: Request, res: Response) => {
     ratings,
   } = req.body;
   const newProduct = {
-    id: (nextProductId++).toString(),
+    id: nextProductId++,
     name,
     price,
     category,
@@ -125,7 +135,7 @@ app.post("/products", (req: Request, res: Response) => {
 });
 
 app.get("/products/:productId", (req: Request, res: Response) => {
-  const productId = req.params.productId;
+  const productId = parseInt(req.params.productId);
   const product = products.find((p) => p.id === productId);
   if (!product) {
     return res.status(404).json({ error: "Product not found" });
@@ -134,7 +144,7 @@ app.get("/products/:productId", (req: Request, res: Response) => {
 });
 
 app.put("/products/:productId", (req: Request, res: Response) => {
-  const productId = req.params.productId;
+  const productId = parseInt(req.params.productId);
   const productIndex = products.findIndex((p) => p.id === productId);
   if (productIndex === -1) {
     return res.status(404).json({ error: "Product not found" });
