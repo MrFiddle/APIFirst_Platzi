@@ -5,6 +5,11 @@ info:
   description: An example OpenAPI specification for an API-first project.
 servers:
   - url: http://localhost:3000
+    description: V0 API Local server
+  - url: http://localhost:3000/v1
+    description: V1 API Local server
+  - url: http://localhost:3000/v2
+    description: V2 API Local server
 tags:
   - name: General
     description: General endpoints
