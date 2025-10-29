@@ -11,8 +11,34 @@ const app = express();
 const port = 3000;
 
 // In-memory storage for users
-const users: any[] = [];
-let nextUserId = 1;
+const users: any[] = [
+  {
+    id: "1",
+    name: "John Doe",
+    age: 30,
+    email: "john.doe@example.com",
+  },
+];
+let nextUserId = 2;
+
+// In-memory storage for products
+const products: any[] = [
+  {
+    id: "1",
+    name: "Sample Product",
+    price: 20.0,
+    category: "electronics",
+    description: "This is a sample product.",
+    tags: ["sample", "product"],
+    inStock: true,
+    specifications: {
+      weight: "1kg",
+      dimensions: "10x10x10cm",
+    },
+    ratings: [{ score: 5, review: "Great product!" }],
+  },
+];
+let nextProductId = 2;
 
 app.use(express.json());
 
@@ -69,6 +95,54 @@ app.put("/users/:userId", (req: Request, res: Response) => {
   users[userIndex] = { ...users[userIndex], ...updates };
   console.log("User updated!", users[userIndex]);
   res.status(200).json(users[userIndex]);
+});
+
+app.post("/products", (req: Request, res: Response) => {
+  const {
+    name,
+    price,
+    category,
+    description,
+    tags,
+    inStock,
+    specifications,
+    ratings,
+  } = req.body;
+  const newProduct = {
+    id: (nextProductId++).toString(),
+    name,
+    price,
+    category,
+    description,
+    tags,
+    inStock,
+    specifications,
+    ratings,
+  };
+  products.push(newProduct);
+  console.log("New product created:", newProduct);
+  res.status(201).json(newProduct);
+});
+
+app.get("/products/:productId", (req: Request, res: Response) => {
+  const productId = req.params.productId;
+  const product = products.find((p) => p.id === productId);
+  if (!product) {
+    return res.status(404).json({ error: "Product not found" });
+  }
+  res.status(200).json(product);
+});
+
+app.put("/products/:productId", (req: Request, res: Response) => {
+  const productId = req.params.productId;
+  const productIndex = products.findIndex((p) => p.id === productId);
+  if (productIndex === -1) {
+    return res.status(404).json({ error: "Product not found" });
+  }
+  const updates = req.body;
+  products[productIndex] = { ...products[productIndex], ...updates };
+  console.log("Product updated!", products[productIndex]);
+  res.status(200).json(products[productIndex]);
 });
 
 // Error handler for validation errors
